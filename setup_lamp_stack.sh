@@ -83,10 +83,16 @@ if confirm "Proceed with installing latest NGINX with Brotli and HTTP/3 support?
   cd "$BUILD_DIR"
 
   # Download latest NGINX source
+  echo "Fetching latest stable NGINX version..."
   NGINX_VERSION=$(curl -s https://nginx.org/en/download.html | grep -oP 'nginx-\K[0-9.]+(?=</a>.*stable version)' | head -1)
+  if [ -z "$NGINX_VERSION" ]; then
+    echo "Failed to detect NGINX version. Using default 1.24.0"
+    NGINX_VERSION="1.24.0"
+  fi
   NGINX_TARBALL_URL="https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz"
   echo "Downloading NGINX from $NGINX_TARBALL_URL"
-  curl -L -o nginx.tar.gz "$NGINX_TARBALL_URL"
+  # Use wget instead of curl to avoid gzip error
+  wget -O nginx.tar.gz "$NGINX_TARBALL_URL"
   tar -xzf nginx.tar.gz
 
   # Download Brotli module
