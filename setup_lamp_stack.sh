@@ -105,15 +105,27 @@ if confirm "Proceed with installing MariaDB, MongoDB, and PostgreSQL?"; then
 
   echo "Securing MariaDB installation..."
   if command -v mysql_secure_installation &> /dev/null; then
-    mysql_secure_installation <<EOF
-
-y
-StrongRootPass123!
-StrongRootPass123!
-y
-y
-y
-y
+    echo "Automating mysql_secure_installation using expect..."
+    apt install -y expect
+    expect <<EOF
+spawn mysql_secure_installation
+expect "Enter current password for root (enter for none):"
+send "\r"
+expect "Set root password?"
+send "Y\r"
+expect "New password:"
+send "StrongRootPass123!\r"
+expect "Re-enter new password:"
+send "StrongRootPass123!\r"
+expect "Remove anonymous users?"
+send "Y\r"
+expect "Disallow root login remotely?"
+send "Y\r"
+expect "Remove test database and access to it?"
+send "Y\r"
+expect "Reload privilege tables now?"
+send "Y\r"
+expect eof
 EOF
   else
     echo "mysql_secure_installation command not found, skipping MariaDB secure installation."
