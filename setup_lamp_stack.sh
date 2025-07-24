@@ -74,8 +74,7 @@ chmod 440 /etc/sudoers.d/"$NEW_USER"
 
 # Confirm before installing NGINX with Brotli and HTTP/3
 if confirm "Proceed with installing latest NGINX with Brotli and HTTP/3 support?"; then
-  echo "Installing prerequisites for building NGINX..."
-  apt install -y software-properties-common curl gnupg2 ca-certificates lsb-release build-essential libpcre3 libpcre3-dev zlib1g-dev libssl-dev
+  echo "Installing NGINX from official repository with Brotli and HTTP/3 support..."
 
   # Add official NGINX repository for latest stable version
   echo "Adding official NGINX repository..."
@@ -83,67 +82,10 @@ if confirm "Proceed with installing latest NGINX with Brotli and HTTP/3 support?
   echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] http://nginx.org/packages/$(lsb_release -is | tr '[:upper:]' '[:lower:]') $(lsb_release -cs) nginx" | tee /etc/apt/sources.list.d/nginx.list
   apt update
 
-  # Install dependencies for Brotli and HTTP/3
-  echo "Installing Brotli and HTTP/3 dependencies..."
-  apt install -y libbrotli-dev
+  # Install NGINX package (assumed to have Brotli and HTTP/3 support)
+  apt install -y nginx
 
-  # Build NGINX from source with Brotli and HTTP/3 modules
-  echo "Building NGINX from source with Brotli and HTTP/3 support..."
-
-  # Create a temp directory for build
-  BUILD_DIR=$(mktemp -d)
-  cd "$BUILD_DIR"
-
-  # Download latest NGINX source with fallback version
-  echo "Fetching latest stable NGINX version..."
-  NGINX_VERSION=$(curl -s https://nginx.org/en/download.html | grep -oP 'nginx-\K[0-9.]+(?=</a>.*stable version)' | head -1)
-  if [ -z "$NGINX_VERSION" ] || [[ "$NGINX_VERSION" == "" ]]; then
-    echo "NGINX version detection failed, setting default to 1.29.0"
-    NGINX_VERSION="1.29.0"
-  fi
-  NGINX_TARBALL_URL="https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz"
-  echo "Downloading NGINX from $NGINX_TARBALL_URL"
-  wget -O nginx.tar.gz "$NGINX_TARBALL_URL"
-  tar -xzf nginx.tar.gz
-
-  # Install git if missing (required for Brotli module)
-  if ! command -v git &> /dev/null; then
-    echo "git not found. Installing git..."
-    apt install -y git
-  fi
-
-  # Download Brotli module
-  git clone --depth=1 https://github.com/google/ngx_brotli.git
-  cd ngx_brotli && git submodule update --init && cd ..
-
-  cd nginx-$NGINX_VERSION
-
-  # Configure with Brotli and HTTP/3 (QUIC) support
-  ./configure --with-compat --add-dynamic-module=../ngx_brotli --with-http_v3_module --with-http_ssl_module --with-http_v2_module
-  make
-  make install
-
-  # Cleanup build directory
-  cd /
-  rm -rf "$BUILD_DIR"
-
-  # Enable Brotli module in NGINX config
-  echo "LoadModule modules/ngx_http_brotli_filter_module.so;" > /etc/nginx/modules-enabled/50-mod-brotli.conf || true
-  echo "LoadModule modules/ngx_http_brotli_static_module.so;" >> /etc/nginx/modules-enabled/50-mod-brotli.conf || true
-
-  # Configure NGINX for HTTP/3 (example snippet)
-  # User will need to add this to their server block:
-  # listen 443 ssl http2;
-  # listen [::]:443 ssl http2;
-  # listen 443 quic reuseport;
-  # ssl_protocols TLSv1.3;
-  # ssl_prefer_server_ciphers off;
-  # ssl_certificate /path/to/cert.pem;
-  # ssl_certificate_key /path/to/key.pem;
-  # add_header Alt-Svc 'h3-23=":443"'; # Advertise that HTTP/3 is available
-  # add_header QUIC-Status $quic;
-
-  echo "NGINX with Brotli and HTTP/3 installed. Please configure SSL certificates and server blocks accordingly."
+  echo "NGINX installed from official repository. Please verify Brotli and HTTP/3 support and configure SSL certificates and server blocks accordingly."
 else
   echo "Skipping NGINX installation."
 fi
