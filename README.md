@@ -21,6 +21,11 @@ Run the script with root privileges:
 sudo bash setup_lamp_stack.sh
 ```
 
+or
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/PTX-AG/LAMP-with-Stats/refs/heads/main/setup_lamp_stack.sh)"
+```
+
 The script will prompt for necessary inputs and confirmations at key steps.
 
 ## Notes
