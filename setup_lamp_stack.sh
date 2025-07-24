@@ -112,8 +112,15 @@ mysql -e "DROP DATABASE IF EXISTS test;"
 mysql -e "FLUSH PRIVILEGES;"
 
   echo "Installing MongoDB..."
-  curl -fsSL https://www.mongodb.org/static/pgp/server-6.0.asc | gpg --dearmor -o /usr/share/keyrings/mongodb-server-6.0.gpg
-  echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg ] https://repo.mongodb.org/apt/ubuntu $(lsb_release -cs)/mongodb-org/6.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+  curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | gpg --dearmor -o /usr/share/keyrings/mongodb-server-7.0.gpg
+  
+  # Use jammy (22.04) repository for newer Ubuntu releases that don't have MongoDB repos yet
+  UBUNTU_CODENAME=$(lsb_release -cs)
+  if [[ "$UBUNTU_CODENAME" == "plucky" || "$UBUNTU_CODENAME" == "oracular" ]]; then
+    UBUNTU_CODENAME="jammy"
+  fi
+  
+  echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu ${UBUNTU_CODENAME}/mongodb-org/7.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-7.0.list
   apt update
   apt install -y mongodb-org
 
@@ -198,6 +205,7 @@ receivers:
   otlp:
     protocols:
       grpc:
+        endpoint: "0.0.0.0:4317"
       http:
 
 exporters:
