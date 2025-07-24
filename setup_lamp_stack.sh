@@ -86,8 +86,8 @@ if confirm "Proceed with installing latest NGINX with Brotli and HTTP/3 support?
   echo "Fetching latest stable NGINX version..."
   NGINX_VERSION=$(curl -s https://nginx.org/en/download.html | grep -oP 'nginx-\K[0-9.]+(?=</a>.*stable version)' | head -1)
   if [ -z "$NGINX_VERSION" ] || [[ "$NGINX_VERSION" == "" ]]; then
-    echo "NGINX version detection failed, setting default to 1.24.0"
-    NGINX_VERSION="1.24.0"
+    echo "NGINX version detection failed, setting default to 1.29.0"
+    NGINX_VERSION="1.29.0"
   fi
   NGINX_TARBALL_URL="https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz"
   echo "Downloading NGINX from $NGINX_TARBALL_URL"
