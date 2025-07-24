@@ -107,7 +107,7 @@ if confirm "Proceed with installing latest NGINX with Brotli and HTTP/3 support?
   cd nginx-$NGINX_VERSION
 
   # Configure with Brotli and HTTP/3 (QUIC) support
-  ./configure --with-compat --add-dynamic-module=../ngx_brotli --with-http_v3_module --with-http_ssl_module --with-http_v2_module --with-http3
+  ./configure --with-compat --add-dynamic-module=../ngx_brotli --with-http_v3_module --with-http_ssl_module --with-http_v2_module
   make
   make install
 
