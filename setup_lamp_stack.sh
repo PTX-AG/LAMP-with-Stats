@@ -82,14 +82,10 @@ if confirm "Proceed with installing latest NGINX with Brotli and HTTP/3 support?
   BUILD_DIR=$(mktemp -d)
   cd "$BUILD_DIR"
 
-  # Download latest NGINX source
+  # Download latest NGINX source with fallback version
   echo "Fetching latest stable NGINX version..."
   NGINX_VERSION=$(curl -s https://nginx.org/en/download.html | grep -oP 'nginx-\K[0-9.]+(?=</a>.*stable version)' | head -1)
-  if [ -z "$NGINX_VERSION" ]; then
-    echo "Failed to detect NGINX version. Using default 1.24.0"
-    NGINX_VERSION="1.24.0"
-  fi
-  if [[ "$NGINX_VERSION" == "" ]]; then
+  if [ -z "$NGINX_VERSION" ] || [[ "$NGINX_VERSION" == "" ]]; then
     echo "NGINX version detection failed, setting default to 1.24.0"
     NGINX_VERSION="1.24.0"
   fi
