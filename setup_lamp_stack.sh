@@ -30,6 +30,18 @@ if ! command -v ssh &> /dev/null; then
   apt install -y openssh-server
 fi
 
+# Check and install git if missing
+if ! command -v git &> /dev/null; then
+  echo "git not found. Installing git..."
+  apt install -y git
+fi
+
+# Check and install wget if missing
+if ! command -v wget &> /dev/null; then
+  echo "wget not found. Installing wget..."
+  apt install -y wget
+fi
+
 # Prompt for new username and password
 read -rp "Enter the username to create: " NEW_USER
 while id "$NEW_USER" &>/dev/null; do
