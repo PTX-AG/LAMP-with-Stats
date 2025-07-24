@@ -104,7 +104,8 @@ if confirm "Proceed with installing MariaDB, MongoDB, and PostgreSQL?"; then
   apt install -y mariadb-server mariadb-client
 
   echo "Securing MariaDB installation..."
-  mysql_secure_installation <<EOF
+  if command -v mysql_secure_installation &> /dev/null; then
+    mysql_secure_installation <<EOF
 
 y
 StrongRootPass123!
@@ -114,6 +115,9 @@ y
 y
 y
 EOF
+  else
+    echo "mysql_secure_installation command not found, skipping MariaDB secure installation."
+  fi
 
   echo "Installing MongoDB..."
   wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | apt-key add -
