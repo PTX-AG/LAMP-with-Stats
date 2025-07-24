@@ -83,9 +83,11 @@ if confirm "Proceed with installing latest NGINX with Brotli and HTTP/3 support?
   cd "$BUILD_DIR"
 
   # Download latest NGINX source
-  NGINX_VERSION=$(curl -s http://nginx.org/en/download.html | grep -oP 'nginx-\K[0-9.]+(?=</a>.*stable version)' | head -1)
-  curl -LO http://nginx.org/download/nginx-$NGINX_VERSION.tar.gz
-  tar -xzf nginx-$NGINX_VERSION.tar.gz
+  NGINX_VERSION=$(curl -s https://nginx.org/en/download.html | grep -oP 'nginx-\K[0-9.]+(?=</a>.*stable version)' | head -1)
+  NGINX_TARBALL_URL="https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz"
+  echo "Downloading NGINX from $NGINX_TARBALL_URL"
+  curl -L -o nginx.tar.gz "$NGINX_TARBALL_URL"
+  tar -xzf nginx.tar.gz
 
   # Download Brotli module
   git clone --depth=1 https://github.com/google/ngx_brotli.git
