@@ -94,6 +94,12 @@ if confirm "Proceed with installing latest NGINX with Brotli and HTTP/3 support?
   wget -O nginx.tar.gz "$NGINX_TARBALL_URL"
   tar -xzf nginx.tar.gz
 
+  # Install git if missing (required for Brotli module)
+  if ! command -v git &> /dev/null; then
+    echo "git not found. Installing git..."
+    apt install -y git
+  fi
+
   # Download Brotli module
   git clone --depth=1 https://github.com/google/ngx_brotli.git
   cd ngx_brotli && git submodule update --init && cd ..
