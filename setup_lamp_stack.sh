@@ -89,9 +89,12 @@ if confirm "Proceed with installing latest NGINX with Brotli and HTTP/3 support?
     echo "Failed to detect NGINX version. Using default 1.24.0"
     NGINX_VERSION="1.24.0"
   fi
+  if [[ "$NGINX_VERSION" == "" ]]; then
+    echo "NGINX version detection failed, setting default to 1.24.0"
+    NGINX_VERSION="1.24.0"
+  fi
   NGINX_TARBALL_URL="https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz"
   echo "Downloading NGINX from $NGINX_TARBALL_URL"
-  # Use wget instead of curl to avoid gzip error
   wget -O nginx.tar.gz "$NGINX_TARBALL_URL"
   tar -xzf nginx.tar.gz
 
